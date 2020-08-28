@@ -5,7 +5,13 @@ let canvas,         // área de desenho
     gl,             // API do WebGL
     frame = 0,      // número do frame atual
     vertexSrc,
-    fragmentSrc;
+    fragmentSrc,
+    vertexShader,
+    fragmentShader,
+    shaderProgram,
+    data,
+    positionAttr,
+    positionBuffer;
 
 async function main(evt){
     // 1 - Criar uma área de desenho
@@ -21,13 +27,28 @@ async function main(evt){
     console.log("VERTEX:", vertexSrc);
     console.log("FRAGMENT:", fragmentSrc);
 
-
     // 4 - Compilar os shaders
+    vertexShader = compile(vertexSrc, gl.VERTEX_SHADER);
+    fragmentShader = compile(fragmentSrc, gl.FRAGMENT_SHADER);
+
     // 5 - Linkar os shaders
+    shaderProgram = link(vertexShader, fragmentShader);
+    gl.useProgram(shaderProgram);
+
     // 6 - Criar os dados de modelo
+    data = getData();
+
     // 7 - Transferir dados de modelo para GPU
+    positionAttr = gl.getAttribLocation(shaderProgram, "position");
+    positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data.points, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(positionAttr);
+    gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
+
     // 7.5 - Uniforms...
     // 8 - Chamar o loop de redesenho
+    render();
 }
 
 function render(){
@@ -37,6 +58,17 @@ function render(){
     // 8.4 - Encerrar frame de desenho
     frame++;
     requestAnimationFrame(render);
+}
+
+function getData(){
+    let points = [
+        1.0, 1.0,
+        0.5, 0.5,
+        -0.8, 0.8
+    ];
+    let array = new Float32Array(points);
+    let modelo = {"points": array};
+    return modelo;
 }
 
 function createCanvas(){
@@ -53,4 +85,31 @@ function loadGL(){
     gl.viewport(0, 0, canvas.width, canvas.height);
     // gl.enable(gl.DEPTH_TEST);
     return gl;
+}
+
+function compile(source, type){
+    let shader = gl.createShader(type);
+    let typeInfo = type === gl.VERTEX_SHADER ? "VERTEX" : "FRAGMENT";
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
+        let reason = gl.getShaderInfoLog(shader);
+        console.error("ERRO NA COMPILAÇÃO ::", type, reason);
+        return null;
+    }
+    console.info("SHADER COMPILADO :: ", typeInfo);
+    return shader;
+}
+
+function link(vertexShader, fragmentShader){
+    let program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if(!gl.getProgramParameter(program, gl.LINK_STATUS)){
+        console.error("ERRO NO LINK");
+        return null;
+    }
+    console.info("LINKAGEM BEM SUCEDIDA!!!");
+    return program;
 }
