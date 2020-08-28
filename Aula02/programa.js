@@ -11,7 +11,8 @@ let canvas,         // área de desenho
     shaderProgram,
     data,
     positionAttr,
-    positionBuffer;
+    positionBuffer,
+    frameUniform;
 
 async function main(evt){
     // 1 - Criar uma área de desenho
@@ -47,19 +48,22 @@ async function main(evt){
     gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
 
     // 7.5 - Uniforms...
+    frameUniform = gl.getUniformLocation(shaderProgram, "frame");
+
     // 8 - Chamar o loop de redesenho
     render();
 }
 
 function render(){
     // 8.1 - Atualizar dados
+    gl.uniform1f(frameUniform, frame);
 
     // 8.2 - Limpar a tela
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // 8.3 - Desenhar
-    // POINTS, 
-    gl.drawArrays(gl.POINTS, 0, data.points.length / 2);
+    // POINTS, LINES, LINE_STRIP, TRIANGLES 
+    gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 2);
 
     // 8.4 - Encerrar frame de desenho
     frame++;
@@ -70,7 +74,8 @@ function getData(){
     let points = [
         0.9, 0.9,
         0.5, 0.5,
-        -0.8, 0.8
+        -0.8, 0.8,
+        0.8, -0.8
     ];
     let array = new Float32Array(points);
     let modelo = {"points": array};

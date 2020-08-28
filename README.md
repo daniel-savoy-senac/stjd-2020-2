@@ -7,3 +7,9 @@ python -m SimpleHTTPServer
 
 # GLSL
 https://www.shaderific.com/glsl
+
+# MDN
+https://developer.mozilla.org/
+
+# CURSO ONLINE
+https://www.udacity.com/course/interactive-3d-graphics--cs291
