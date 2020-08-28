@@ -53,8 +53,14 @@ async function main(evt){
 
 function render(){
     // 8.1 - Atualizar dados
+
     // 8.2 - Limpar a tela
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
     // 8.3 - Desenhar
+    // POINTS, 
+    gl.drawArrays(gl.POINTS, 0, data.points.length / 2);
+
     // 8.4 - Encerrar frame de desenho
     frame++;
     requestAnimationFrame(render);
@@ -62,7 +68,7 @@ function render(){
 
 function getData(){
     let points = [
-        1.0, 1.0,
+        0.9, 0.9,
         0.5, 0.5,
         -0.8, 0.8
     ];
