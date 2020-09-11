@@ -12,6 +12,8 @@ let canvas,         // área de desenho
     data,           // modelo 3D
     positionAttr,   // referência do buffer no shader de fragmento
     positionBuffer, // buffer alocado
+    p2Attr,   // referência do buffer no shader de fragmento
+    p2Buffer, // buffer alocado
     frameUniform;   // variável de frame nos shaders
 
 async function main(evt){
@@ -40,12 +42,22 @@ async function main(evt){
     data = getData();
 
     // 7 - Transferir dados de modelo para GPU
+
+    // POSITION 
     positionAttr = gl.getAttribLocation(shaderProgram, "position");
     positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, data.points, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(positionAttr);
     gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
+
+    // P2
+    p2Attr = gl.getAttribLocation(shaderProgram, "p2");
+    p2Buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, p2Buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data.points2, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(p2Attr);
+    gl.vertexAttribPointer(p2Attr, 2, gl.FLOAT, false, 0, 0);
 
     // 7.5 - Uniforms...
     frameUniform = gl.getUniformLocation(shaderProgram, "frame");
@@ -73,12 +85,17 @@ function render(){
 function getData(){
     let points = [
         0.9, 0.9,
-        0.5, 0.5,
-        -0.8, 0.8,
-        0.8, -0.8
+        0.5, -0.5,
+        -1.0, -1.0
     ];
-    let array = new Float32Array(points);
-    let modelo = {"points": array};
+
+    let points2 = [
+       0.0, 0.9,
+       0.0, 0.0,
+       0.9, 0.0 
+    ];
+
+    let modelo = {"points": new Float32Array(points), "points2": new Float32Array(points2)};
     return modelo;
 }
 

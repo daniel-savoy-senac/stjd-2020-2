@@ -2,7 +2,11 @@ precision highp float;
 
 attribute vec2 position;
 
+attribute vec2 p2;
+
 uniform float frame;
+
+varying vec2 ponto;
 
 void main(){
 
@@ -20,9 +24,9 @@ void main(){
     //float t = min(1.0, n * 1.0 / (seg * fps));
 
     // posição final
-    vec2 p2 = position + vec2(-0.5, -0.3);
+    // vec2 p2 = position + vec2(-0.5, -0.3);
 
-    vec2 ponto = mix(position, p2, t);
+    ponto = mix(position, p2, t);
 
     gl_Position = vec4(ponto, 0.0, 1.0);
 }
