@@ -13,11 +13,13 @@ let canvas,         // área de desenho
     data,           // modelo 3D
     positionAttr,   // referência do buffer no shader de fragmento
     positionBuffer, // buffer alocado
-    p2Attr,   // referência do buffer no shader de fragmento
-    p2Buffer, // buffer alocado
-    frameUniform,
+    p2Attr,         // referência do buffer no shader de fragmento
+    p2Buffer,       // buffer alocado
+    frameUniform,   // variável de frame nos shaders
     width,
-    height;   // variável de frame nos shaders
+    height, 
+    aspect,
+    aspectUniform;   
 
 async function main(evt){
     // 1 - Criar uma área de desenho
@@ -25,9 +27,6 @@ async function main(evt){
 
     // 2 - Carregar a API do WebGL (OpenGL)
     gl = loadGL();
-
-    // 2.5 - Recalcula o tamanho da tela
-    resize();
 
     // 3 - Carregar os arquivos fonte de shader (GLSL)
     vertexSrc = await fetch("vertex.glsl").then(r => r.text());
@@ -67,39 +66,51 @@ async function main(evt){
 
     // 7.5 - Uniforms...
     frameUniform = gl.getUniformLocation(shaderProgram, "frame");
+    aspectUniform = gl.getUniformLocation(shaderProgram, "aspect");
 
-    // 8 - Chamar o loop de redesenho
+    // 8 - Recalcula o tamanho da tela
+    resize();
+
+    // 9 - Chamar o loop de redesenho
     render();
 }
 
 function render(){
-    // 8.1 - Atualizar dados
+    // 9.1 - Atualizar dados
     gl.uniform1f(frameUniform, frame);
 
-    // 8.2 - Limpar a tela
+    // 9.2 - Limpar a tela
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // 8.3 - Desenhar
+    // 9.3 - Desenhar
     // POINTS, LINES, LINE_STRIP, TRIANGLES 
     gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 2);
 
-    // 8.4 - Encerrar frame de desenho
+    // 9.4 - Encerrar frame de desenho
     frame++;
     requestAnimationFrame(render);
 }
 
 function getData(){
     let points = [
-        0.9, 0.9,
-        0.5, -0.5,
-        -1.0, -1.0
-    ];
+        -1, 1,
+        -1, 0,
+        0, 1,
+
+        0, 0,
+        0, 1,
+        -1, 0
+        ];
 
     let points2 = [
-       0.0, 0.9,
-       0.0, 0.0,
-       0.9, 0.0 
-    ];
+        -.5, .5,
+        -.5, -1,
+        1, .5,
+
+        1, -1,
+        1, .5,
+        -.5, -1
+        ];
 
     let modelo = {"points": new Float32Array(points), "points2": new Float32Array(points2)};
     return modelo;
@@ -148,9 +159,14 @@ function link(vertexShader, fragmentShader){
 function resize(){
     width = window.innerWidth;
     height = window.innerHeight;
+    aspect = width / height;
     if(canvas){
         canvas.setAttribute("width", width);
         canvas.setAttribute("height", height);
     }
-    if(gl) gl.viewport(0, 0, canvas.width, canvas.height);
+    if(gl) 
+        gl.viewport(0, 0, canvas.width, canvas.height);
+    if(aspectUniform)
+        gl.uniform1f(aspectUniform, aspect);
+
 }
