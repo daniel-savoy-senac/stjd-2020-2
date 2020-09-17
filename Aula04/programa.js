@@ -1,4 +1,5 @@
 window.addEventListener("load", main);
+window.addEventListener("resize", resize);
 
 // VARIÁVEIS GLOBAIS
 let canvas,         // área de desenho
@@ -14,7 +15,9 @@ let canvas,         // área de desenho
     positionBuffer, // buffer alocado
     p2Attr,   // referência do buffer no shader de fragmento
     p2Buffer, // buffer alocado
-    frameUniform;   // variável de frame nos shaders
+    frameUniform,
+    width,
+    height;   // variável de frame nos shaders
 
 async function main(evt){
     // 1 - Criar uma área de desenho
@@ -22,6 +25,9 @@ async function main(evt){
 
     // 2 - Carregar a API do WebGL (OpenGL)
     gl = loadGL();
+
+    // 2.5 - Recalcula o tamanho da tela
+    resize();
 
     // 3 - Carregar os arquivos fonte de shader (GLSL)
     vertexSrc = await fetch("vertex.glsl").then(r => r.text());
@@ -101,8 +107,6 @@ function getData(){
 
 function createCanvas(){
     let canvas = document.createElement("canvas");
-    canvas.setAttribute("width", 800);
-    canvas.setAttribute("height", 600);
     canvas.style.background = "hsl(0deg, 0%, 80%)";
     document.body.appendChild(canvas);
     return canvas;
@@ -110,7 +114,6 @@ function createCanvas(){
 
 function loadGL(){
     let gl = canvas.getContext("webgl");
-    gl.viewport(0, 0, canvas.width, canvas.height);
     // gl.enable(gl.DEPTH_TEST);
     return gl;
 }
@@ -140,4 +143,14 @@ function link(vertexShader, fragmentShader){
     }
     console.info("LINKAGEM BEM SUCEDIDA!!!");
     return program;
+}
+
+function resize(){
+    width = window.innerWidth;
+    height = window.innerHeight;
+    if(canvas){
+        canvas.setAttribute("width", width);
+        canvas.setAttribute("height", height);
+    }
+    if(gl) gl.viewport(0, 0, canvas.width, canvas.height);
 }
