@@ -22,5 +22,5 @@ void main(){
 
     ponto = mix(position, p2, t);
 
-    gl_Position = vec4(ponto, 0.0, 1.0);
+    gl_Position = vec4(ponto.x / aspect, ponto.y, 0.0, 1.0);
 }
