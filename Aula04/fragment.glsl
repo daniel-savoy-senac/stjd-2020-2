@@ -2,7 +2,7 @@ precision highp float;
 
 uniform float frame;
 
-varying vec2 ponto;
+varying vec3 ponto;
 
 void main(){
 

@@ -54,7 +54,7 @@ async function main(evt){
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, data.points, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(positionAttr);
-    gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(positionAttr, 3, gl.FLOAT, false, 0, 0);
 
     // P2
     p2Attr = gl.getAttribLocation(shaderProgram, "p2");
@@ -62,7 +62,7 @@ async function main(evt){
     gl.bindBuffer(gl.ARRAY_BUFFER, p2Buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data.points2, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(p2Attr);
-    gl.vertexAttribPointer(p2Attr, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(p2Attr, 3, gl.FLOAT, false, 0, 0);
 
     // 7.5 - Uniforms...
     frameUniform = gl.getUniformLocation(shaderProgram, "frame");
@@ -84,7 +84,7 @@ function render(){
 
     // 9.3 - Desenhar
     // POINTS, LINES, LINE_STRIP, TRIANGLES 
-    gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 2);
+    gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 3);
 
     // 9.4 - Encerrar frame de desenho
     frame++;
@@ -93,23 +93,23 @@ function render(){
 
 function getData(){
     let points = [
-        -1, 1,
-        -1, 0,
-        0, 1,
+        -1, 1, 1,
+        -1, 0, 1,
+        0, 1, 1,
 
-        0, 0,
-        0, 1,
-        -1, 0
+        0, 0, 0,
+        0, 1, 0,
+        -1, 0, 0
         ];
 
     let points2 = [
-        -.5, .5,
-        -.5, -1,
-        1, .5,
+        -.5, .5, 1,
+        -.5, -1, 1,
+        1, .5, 1,
 
-        1, -1,
-        1, .5,
-        -.5, -1
+        1, -1, 0,
+        1, .5, 0,
+        -.5, -1, 0
         ];
 
     let modelo = {"points": new Float32Array(points), "points2": new Float32Array(points2)};

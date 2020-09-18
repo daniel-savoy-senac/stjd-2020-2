@@ -1,14 +1,14 @@
 precision highp float;
 
-attribute vec2 position;
+attribute vec3 position;
 
-attribute vec2 p2;
+attribute vec3 p2;
 
 uniform float frame;
 
 uniform float aspect;
 
-varying vec2 ponto;
+varying vec3 ponto;
 
 void main(){
 
@@ -22,5 +22,5 @@ void main(){
 
     ponto = mix(position, p2, t);
 
-    gl_Position = vec4(ponto.x / aspect, ponto.y, 0.0, 1.0);
+    gl_Position = vec4(ponto.x / aspect, ponto.y, ponto.z, 1.0);
 }
