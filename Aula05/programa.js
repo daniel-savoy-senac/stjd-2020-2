@@ -61,25 +61,28 @@ async function main(evt){
     gl.enableVertexAttribArray(positionAttr);
     gl.vertexAttribPointer(positionAttr, 3, gl.FLOAT, false, 0, 0);
 
-    // 7.5 - Uniforms...
-    // 7.5.1 - Model
-    model = mat4.identity([]);
+
+    // 7.5 - Recalcula o tamanho da tela
+    resize();
+
+    // 8 - Uniforms...
+    // 8.1 - Model
+    model = mat4.fromTranslation([],[1,-1,0]);
     modelUniform = gl.getUniformLocation(shaderProgram, "model");
     gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model));
 
-    view = mat4.identity([]);
+    // 8.2 - View
+    view = mat4.lookAt([], [3, -3 , -10], [0.0, 0.0, 0.0], [0,-1,0]);
     viewUniform = gl.getUniformLocation(shaderProgram, "view");
     gl.uniformMatrix4fv(viewUniform, false, new Float32Array(view));
 
-    projection = mat4.identity([]);
+    // 8.3 - Projection
+    projection = mat4.perspective([], 0.3*Math.PI, aspect, 0.01, 10);
     projectionUniform = gl.getUniformLocation(shaderProgram, "projection");
     gl.uniformMatrix4fv(projectionUniform, false, new Float32Array(projection));
 
-
     frameUniform = gl.getUniformLocation(shaderProgram, "frame");
 
-    // 8 - Recalcula o tamanho da tela
-    resize();
 
     // 9 - Chamar o loop de redesenho
     render();
@@ -102,15 +105,44 @@ function render(){
 }
 
 function getData(){
-    let points = [
-        -1, 1, 1,
-        -1, 0, 1,
-        0, 1, 1,
 
-        0, 0, 0,
-        0, 1, 0,
-        -1, 0, 0
-        ];
+    let v = [
+        // 0: A - EQ TP FR
+        [-1,-1,-1],
+        // 1: B - DR TP FR
+        [1,-1,-1],
+        // 2: C - DR BX FR
+        [1,1,-1],
+        // 3: D - EQ BX FR
+        [-1,1,-1],
+        // 4: E - EQ TP TZ
+        [-1,-1,1],
+        // 5: F - DR TP TZ
+        [1,-1,1],
+        // 6: G - EQ BX TZ
+        [-1,1,1],
+        // 7: H - DR BX TZ
+        [1,1,1]
+    ];
+
+    let points = [
+        // frente
+        // adc
+        ...v[0], ...v[3], ...v[2],
+        // cba
+        ...v[2], ...v[1], ...v[0],
+       
+        // topo
+        // abe
+        ...v[0], ...v[1], ...v[4],
+        // bfe
+        ...v[1], ...v[5], ...v[4]
+
+        // esquerda
+        // direita
+        // baixo
+        // fundo
+    ];
 
     let modelo = {"points": new Float32Array(points)};
     return modelo;
@@ -125,7 +157,7 @@ function createCanvas(){
 
 function loadGL(){
     let gl = canvas.getContext("webgl");
-    // gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.DEPTH_TEST);
     return gl;
 }
 
