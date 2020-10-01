@@ -1,5 +1,6 @@
 window.addEventListener("load", main);
 window.addEventListener("resize", resize);
+window.addEventListener("mousemove", mover);
 
 // VARIÁVEIS GLOBAIS
 let canvas,         // área de desenho
@@ -81,7 +82,7 @@ async function main(evt){
     gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model));
 
     // 8.2 - View
-    view = mat4.lookAt([], [2.5, 3 , 10], [0.0, 0.0, 0.0], [0,-1,0]);
+    view = mat4.lookAt([], [-2.5, 3 , 10], [0.0, 0.0, 0.0], [0,-1,0]);
     viewUniform = gl.getUniformLocation(shaderProgram, "view");
     gl.uniformMatrix4fv(viewUniform, false, new Float32Array(view));
 
@@ -265,4 +266,24 @@ function resize(){
     }
     if(gl) 
         gl.viewport(0, 0, canvas.width, canvas.height);
+
+    if(projectionUniform) {
+        projection = mat4.perspective([], 0.3*Math.PI, aspect, 0.01, 100);
+        gl.uniformMatrix4fv(projectionUniform, false, new Float32Array(projection));
+    }
+}
+
+function mover(evt){
+    const DES = 13;
+    /// -1 < x < 1
+    let x = (evt.x / window.innerWidth)*2 - 1;
+    let y = (evt.y / window.innerHeight)*-2 + 1;
+
+    let dx = x * DES;
+    let dy = y * DES;
+
+    if(view){
+        view = mat4.lookAt([], [dx, dy , 10], [0.0, 0.0, 0.0], [0,-1,0]);
+        gl.uniformMatrix4fv(viewUniform, false, new Float32Array(view));
+    }
 }
