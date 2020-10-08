@@ -1,6 +1,7 @@
 window.addEventListener("load", main);
 window.addEventListener("resize", resize);
 window.addEventListener("mousemove", mover);
+window.addEventListener("keydown", andar);
 
 // VARIÁVEIS GLOBAIS
 let canvas,         // área de desenho
@@ -23,9 +24,12 @@ let canvas,         // área de desenho
     projection,
     projectionUniform,
     model,
+    model2,
     modelUniform,
     view,
-    viewUniform;
+    viewUniform,
+    px = 0,
+    pz = 0;
 
 
 
@@ -77,8 +81,11 @@ async function main(evt){
 
     // 8 - Uniforms...
     // 8.1 - Model
-    model = mat4.fromTranslation([],[1,-1,0]);
     modelUniform = gl.getUniformLocation(shaderProgram, "model");
+    
+    model = mat4.fromTranslation([],[1,-3,0]);
+    model2 = mat4.fromTranslation([],[0,0,0]);
+    
     gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model));
 
     // 8.2 - View
@@ -107,6 +114,9 @@ function render(){
 
     // 9.3 - Desenhar
     // POINTS, LINES, LINE_STRIP, TRIANGLES 
+    gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model));
+    gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 3);
+    gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model2));
     gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 3);
 
     // 9.4 - Encerrar frame de desenho
@@ -286,4 +296,14 @@ function mover(evt){
         view = mat4.lookAt([], [dx, dy , 10], [0.0, 0.0, 0.0], [0,-1,0]);
         gl.uniformMatrix4fv(viewUniform, false, new Float32Array(view));
     }
+}
+
+function andar(evt){
+    if(evt.key === "w") pz--;
+    if(evt.key === "s") pz++;
+    if(evt.key === "a") px++;
+    if(evt.key === "d") px--;
+    
+
+    model2 = mat4.fromTranslation([],[px,0,pz]);
 }
