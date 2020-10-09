@@ -16,7 +16,7 @@ void main(){
 
     ponto =  model * vec4(position, 1.0);
 
-    norm = vec4(normal.xyz, 0.0);
+    norm = model * vec4(normal.xyz, 0.0);
 
     gl_Position = projection * view * ponto;
 }

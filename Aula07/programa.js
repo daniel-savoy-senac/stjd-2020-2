@@ -29,7 +29,8 @@ let canvas,         // área de desenho
     view,
     viewUniform,
     px = 0,
-    pz = 0;
+    pz = 0,
+    dir = 0;
 
 
 
@@ -299,11 +300,22 @@ function mover(evt){
 }
 
 function andar(evt){
-    if(evt.key === "w") pz--;
-    if(evt.key === "s") pz++;
-    if(evt.key === "a") px++;
-    if(evt.key === "d") px--;
-    
+    let dx = 0;
+    let dy = 0;
+    pz = 0;
+    px = 0;
 
-    model2 = mat4.fromTranslation([],[px,0,pz]);
+    if(evt.key === "w") pz = -1;
+    if(evt.key === "s") pz = 1;
+    if(evt.key === "a") px = 1;
+    if(evt.key === "d") px = -1;
+
+    if(evt.key === "ArrowDown") dx = Math.PI * 0.1;
+    if(evt.key === "ArrowUp") dx = Math.PI * -0.1;
+    if(evt.key === "ArrowRight") dy = Math.PI * 0.1;
+    if(evt.key === "ArrowLeft") dy = Math.PI * -0.1;
+    
+    model2 = mat4.rotateY([], model2, dy);
+    model2 = mat4.rotateX([], model2, dx);
+    model2 = mat4.translate([], model2, [px,0,pz]);
 }
