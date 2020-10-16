@@ -230,7 +230,7 @@ function getData(){
     modelo = {
         "points": new Float32Array(e.mesh),
         "normais": new Float32Array(e.mesh)
-    };.
+    };
     */
     return modelo;
 }
