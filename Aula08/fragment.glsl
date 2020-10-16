@@ -11,7 +11,7 @@ void main(){
     // posição dos pontos de luz em relação à origem
     vec4 lightA = vec4(6.0, -10.0, 3.0, 1.0);
     vec4 lightB = vec4(-6.0, 1.0, 3.0, 1.0);
-    float shininess = 36.0;
+    float shininess = 100.0;
 
     // vetor de direção (LA, LB) entre a posição do fragmento (ponto) e os pontos de luz
     vec4 LA = normalize(lightA - ponto);
@@ -22,13 +22,13 @@ void main(){
     vec4 N = normalize(norm);
 
     // vetor de direção entre a posição do fragmento (ponto) e o olho do observador 
-    vec4 P = -1.0 * normalize(view * ponto);
+    vec4 P = normalize(view * -ponto);
 
     // vetor de bissetriz (direção média) entre a direção da luz e do olho
-    vec4 H = normalize(LA+P);
+    vec4 H = normalize(view * LA + P);
 
     // fator de iluminação especular
-    float phongA = pow(max(dot(H, N), 0.0), shininess);
+    float phongA = pow(max(dot(H, view * N), 0.0), shininess);
 
     // fator de iluminação difusa
     float lambertA = max(dot(LA, N), 0.0);
