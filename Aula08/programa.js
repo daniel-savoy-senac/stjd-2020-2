@@ -225,11 +225,13 @@ function getData(){
         "normais": new Float32Array(normais)
     };
 
+    /*
     let e = new Esfera(4);
-    /*modelo = {
+    modelo = {
         "points": new Float32Array(e.mesh),
         "normais": new Float32Array(e.mesh)
-    };*/
+    };.
+    */
     return modelo;
 }
 
