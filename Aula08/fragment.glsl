@@ -45,11 +45,11 @@ void main(){
 
     // luz resultante no ponto (por tipo)
     vec3 shadeSpec = (colorSpecA * phongA);
-    vec3 shadeDif =  (colorDifA * lambertA); // + (colorDifB * lambertB);
+    vec3 shadeDif =  (colorDifA * lambertA) + (colorDifB * lambertB);
     vec3 shadeAmb =  colorAmb * ambient;
 
     // luz total no ponto
-    vec3 shade = shadeDif + shadeAmb;
+    vec3 shade = shadeSpec + shadeDif + shadeAmb;
 
 
     // RGBA
