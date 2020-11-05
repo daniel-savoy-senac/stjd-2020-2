@@ -115,10 +115,10 @@ function render(){
 
     // 9.3 - Desenhar
     // POINTS, LINES, LINE_STRIP, TRIANGLES 
-    gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model));
-    gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 3);
-    gl.uniformMatrix4fv(modelUniform, false, new Float32Array(model2));
-    gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 3);
+    for(let i = 0; i < data.partes.length; i++){
+        gl.uniformMatrix4fv(modelUniform, false, data.partes[i].getModel());
+        gl.drawArrays(gl.TRIANGLES, 0, data.points.length / 3);
+    }
 
     // 9.4 - Encerrar frame de desenho
     frame++;
@@ -220,17 +220,24 @@ function getData(){
 
     ];
 
+    let p0 = new Parte([0,-5,0]);
+    p0.model = mat4.rotateZ([], p0.model, Math.PI / 2);
+    let p1 = new Parte([0,2,0], p0);
+    let p2 = new Parte([0,2,0], p1);
+    let p3 = new Parte([2,2,0], p1);
+
     let modelo = {
         "points": new Float32Array(points), 
-        "normais": new Float32Array(normais)
+        "normais": new Float32Array(normais),
+        "partes" : [p0, p1, p2, p3]
     };
 
     // Esfera
-    let e = new Esfera(4);
+    /*let e = new Esfera(4);
     modelo = {
         "points": new Float32Array(e.mesh),
         "normais": new Float32Array(e.mesh)
-    };
+    };*/
     
     return modelo;
 }
@@ -308,22 +315,9 @@ function mover(evt){
 }
 
 function andar(evt){
-    let dx = 0;
-    let dy = 0;
-    pz = 0;
-    px = 0;
-
-    if(evt.key === "w") pz = -1;
-    if(evt.key === "s") pz = 1;
-    if(evt.key === "a") px = 1;
-    if(evt.key === "d") px = -1;
-
-    if(evt.key === "ArrowDown") dx = Math.PI * 0.1;
-    if(evt.key === "ArrowUp") dx = Math.PI * -0.1;
-    if(evt.key === "ArrowRight") dy = Math.PI * 0.1;
-    if(evt.key === "ArrowLeft") dy = Math.PI * -0.1;
-    
-    model2 = mat4.rotateY([], model2, dy);
-    model2 = mat4.rotateX([], model2, dx);
-    model2 = mat4.translate([], model2, [px,0,pz]);
+    if(data){
+        let p0 = data.partes[0];
+        p0.model = mat4.rotateZ([], p0.model, Math.PI / 2);
+    }
+    return;
 }
